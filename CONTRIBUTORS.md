@@ -26,6 +26,7 @@
 * [lc](https://github.com/lc)
 * [mprencipe](https://github.com/mprencipe)
 * [nnwakelam](https://twitter.com/nnwakelam)
+* [NoF0rte](https://github.com/NoF0rte)
 * [noraj](https://pwn.by/noraj)
 * [oh6hay](https://github.com/oh6hay)
 * [putsi](https://github.com/putsi)
