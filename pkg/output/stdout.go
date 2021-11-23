@@ -155,7 +155,7 @@ func (s *Stdoutput) SetCurrentResults(results []ffuf.Result) {
 }
 
 func (s *Stdoutput) Progress(status ffuf.Progress) {
-	if s.config.Quiet {
+	if s.config.Quiet || s.config.NoProgress {
 		// No progress for quiet mode
 		return
 	}

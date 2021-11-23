@@ -33,6 +33,7 @@
     maxtimejob = 0
     noninteractive = false
     quiet = false
+    noprogress = false
     rate = 0
     stopon403 = false
     stoponall = false

@@ -52,6 +52,7 @@ type GeneralOptions struct {
 	MaxTimeJob             int
 	Noninteractive         bool
 	Quiet                  bool
+	NoProgress             bool
 	Rate                   int
 	ShowVersion            bool `toml:"-"`
 	StopOn403              bool
@@ -116,6 +117,7 @@ func NewConfigOptions() *ConfigOptions {
 	c.General.MaxTimeJob = 0
 	c.General.Noninteractive = false
 	c.General.Quiet = false
+	c.General.NoProgress = false
 	c.General.Rate = 0
 	c.General.ShowVersion = false
 	c.General.StopOn403 = false
@@ -396,6 +398,7 @@ func ConfigFromOptions(parseOpts *ConfigOptions, ctx context.Context, cancel con
 	conf.OutputSkipEmptyFile = parseOpts.Output.OutputSkipEmptyFile
 	conf.IgnoreBody = parseOpts.HTTP.IgnoreBody
 	conf.Quiet = parseOpts.General.Quiet
+	conf.NoProgress = parseOpts.General.NoProgress
 	conf.StopOn403 = parseOpts.General.StopOn403
 	conf.StopOnAll = parseOpts.General.StopOnAll
 	conf.StopOnErrors = parseOpts.General.StopOnErrors

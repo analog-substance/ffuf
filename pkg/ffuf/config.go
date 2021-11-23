@@ -38,6 +38,7 @@ type Config struct {
 	ProgressFrequency      int                       `json:"-"`
 	ProxyURL               string                    `json:"proxyurl"`
 	Quiet                  bool                      `json:"quiet"`
+	NoProgress             bool                      `json:"noprogress"`
 	Rate                   int64                     `json:"rate"`
 	Recursion              bool                      `json:"recursion"`
 	RecursionDepth         int                       `json:"recursion_depth"`
@@ -85,6 +86,7 @@ func NewConfig(ctx context.Context, cancel context.CancelFunc) Config {
 	conf.ProgressFrequency = 125
 	conf.ProxyURL = ""
 	conf.Quiet = false
+	conf.NoProgress = false
 	conf.Rate = 0
 	conf.Recursion = false
 	conf.RecursionDepth = 0
