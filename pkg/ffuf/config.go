@@ -2,6 +2,8 @@ package ffuf
 
 import (
 	"context"
+	"crypto/tls"
+	"crypto/x509"
 )
 
 type Config struct {
@@ -10,6 +12,8 @@ type Config struct {
 	Cancel                 context.CancelFunc        `json:"-"`
 	Cert                   string                    `json:"cert"`
 	CertKey                string                    `json:"cert_key"`
+	ClientCert             *tls.Certificate          `json:"-"`
+	RootCAs                *x509.CertPool            `json:"-"`
 	Colors                 bool                      `json:"colors"`
 	CommandKeywords        []string                  `json:"-"`
 	CommandLine            string                    `json:"cmdline"`
@@ -67,6 +71,8 @@ func NewConfig(ctx context.Context, cancel context.CancelFunc) Config {
 	conf.AutoCalibrationStrings = make([]string, 0)
 	conf.Cert = ""
 	conf.CertKey = ""
+	conf.ClientCert = nil
+	conf.RootCAs = nil
 	conf.CommandKeywords = make([]string, 0)
 	conf.Context = ctx
 	conf.Cancel = cancel

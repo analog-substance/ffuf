@@ -96,6 +96,7 @@ func ParseFlags(opts *ffuf.ConfigOptions) *ffuf.ConfigOptions {
 	flag.StringVar(&opts.HTTP.Data, "data-binary", opts.HTTP.Data, "POST data (alias of -d)")
 	flag.StringVar(&opts.HTTP.Cert, "cert", opts.HTTP.Cert, "Client certificate to use")
 	flag.StringVar(&opts.HTTP.CertKey, "cert-key", opts.HTTP.CertKey, "Client certificate key to use")
+	flag.StringVar(&opts.HTTP.CaCerts, "ca-certs", opts.HTTP.CaCerts, "Certificate authorities for the client certificate")
 	flag.StringVar(&opts.HTTP.Method, "X", opts.HTTP.Method, "HTTP method to use")
 	flag.StringVar(&opts.HTTP.ProxyURL, "x", opts.HTTP.ProxyURL, "Proxy URL (SOCKS5 or HTTP). For example: http://127.0.0.1:8080 or socks5://127.0.0.1:8080")
 	flag.StringVar(&opts.HTTP.ReplayProxyURL, "replay-proxy", opts.HTTP.ReplayProxyURL, "Replay matched requests using this proxy.")

@@ -42,12 +42,21 @@ func NewSimpleRunner(conf *ffuf.Config, replay bool) ffuf.RunnerProvider {
 			proxyURL = http.ProxyURL(pu)
 		}
 	}
-	var certificates []tls.Certificate
-	if conf.Cert != "" && conf.CertKey != "" {
-		cert, err := tls.LoadX509KeyPair(conf.Cert, conf.CertKey)
-		if err == nil {
-			certificates = append(certificates, cert)
+
+	tlsConfig := &tls.Config{
+		InsecureSkipVerify: true,
+		Renegotiation:      tls.RenegotiateOnceAsClient,
+		ServerName:         conf.SNI,
+	}
+
+	if conf.ClientCert != nil {
+		tlsConfig.GetClientCertificate = func(cri *tls.CertificateRequestInfo) (*tls.Certificate, error) {
+			return conf.ClientCert, nil
 		}
+	}
+
+	if conf.RootCAs != nil {
+		tlsConfig.RootCAs = conf.RootCAs
 	}
 
 	simplerunner.config = conf
@@ -63,13 +72,9 @@ func NewSimpleRunner(conf *ffuf.Config, replay bool) ffuf.RunnerProvider {
 				Timeout: time.Duration(time.Duration(conf.Timeout) * time.Second),
 			}).DialContext,
 			TLSHandshakeTimeout: time.Duration(time.Duration(conf.Timeout) * time.Second),
-			TLSClientConfig: &tls.Config{
-				InsecureSkipVerify: true,
-				Renegotiation:      tls.RenegotiateOnceAsClient,
-				ServerName:         conf.SNI,
-				Certificates:       certificates,
-			},
-		}}
+			TLSClientConfig:     tlsConfig,
+		},
+	}
 
 	if conf.FollowRedirects {
 		simplerunner.client.CheckRedirect = nil

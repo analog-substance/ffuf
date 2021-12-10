@@ -3,6 +3,8 @@ package ffuf
 import (
 	"bufio"
 	"context"
+	"crypto/tls"
+	"crypto/x509"
 	"fmt"
 	"io/ioutil"
 	"net/textproto"
@@ -29,6 +31,7 @@ type HTTPOptions struct {
 	Cookies           []string
 	Cert              string
 	CertKey           string
+	CaCerts           string
 	Data              string
 	FollowRedirects   bool
 	Headers           []string
@@ -130,6 +133,7 @@ func NewConfigOptions() *ConfigOptions {
 	c.HTTP.Data = ""
 	c.HTTP.Cert = ""
 	c.HTTP.CertKey = ""
+	c.HTTP.CaCerts = ""
 	c.HTTP.FollowRedirects = false
 	c.HTTP.IgnoreBody = false
 	c.HTTP.Method = ""
@@ -388,6 +392,26 @@ func ConfigFromOptions(parseOpts *ConfigOptions, ctx context.Context, cancel con
 		// Only set if defined on command line, because we might be reparsing the CLI after
 		// populating it through raw request in the first iteration
 		conf.Data = parseOpts.HTTP.Data
+	}
+
+	if parseOpts.HTTP.Cert != "" && parseOpts.HTTP.CertKey != "" {
+		cert, err := tls.LoadX509KeyPair(parseOpts.HTTP.Cert, parseOpts.HTTP.CertKey)
+		if err != nil {
+			errs.Add(err)
+		} else {
+			conf.ClientCert = &cert
+		}
+	}
+
+	if parseOpts.HTTP.CaCerts != "" {
+		caCert, err := os.ReadFile(parseOpts.HTTP.CaCerts)
+		if err != nil {
+			errs.Add(err)
+		} else {
+			caCertPool, _ := x509.SystemCertPool()
+			caCertPool.AppendCertsFromPEM(caCert)
+			conf.RootCAs = caCertPool
+		}
 	}
 
 	// Common stuff
