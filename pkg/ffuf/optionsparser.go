@@ -27,6 +27,8 @@ type ConfigOptions struct {
 
 type HTTPOptions struct {
 	Cookies           []string
+	Cert              string
+	CertKey           string
 	Data              string
 	FollowRedirects   bool
 	Headers           []string
@@ -126,6 +128,8 @@ func NewConfigOptions() *ConfigOptions {
 	c.General.Threads = 40
 	c.General.Verbose = false
 	c.HTTP.Data = ""
+	c.HTTP.Cert = ""
+	c.HTTP.CertKey = ""
 	c.HTTP.FollowRedirects = false
 	c.HTTP.IgnoreBody = false
 	c.HTTP.Method = ""
@@ -389,6 +393,8 @@ func ConfigFromOptions(parseOpts *ConfigOptions, ctx context.Context, cancel con
 	// Common stuff
 	conf.IgnoreWordlistComments = parseOpts.Input.IgnoreWordlistComments
 	conf.DirSearchCompat = parseOpts.Input.DirSearchCompat
+	conf.Cert = parseOpts.HTTP.Cert
+	conf.CertKey = parseOpts.HTTP.CertKey
 	conf.Colors = parseOpts.General.Colors
 	conf.InputNum = parseOpts.Input.InputNum
 	conf.InputMode = parseOpts.Input.InputMode

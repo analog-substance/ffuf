@@ -42,6 +42,13 @@ func NewSimpleRunner(conf *ffuf.Config, replay bool) ffuf.RunnerProvider {
 			proxyURL = http.ProxyURL(pu)
 		}
 	}
+	var certificates []tls.Certificate
+	if conf.Cert != "" && conf.CertKey != "" {
+		cert, err := tls.LoadX509KeyPair(conf.Cert, conf.CertKey)
+		if err == nil {
+			certificates = append(certificates, cert)
+		}
+	}
 
 	simplerunner.config = conf
 	simplerunner.client = &http.Client{
@@ -60,6 +67,7 @@ func NewSimpleRunner(conf *ffuf.Config, replay bool) ffuf.RunnerProvider {
 				InsecureSkipVerify: true,
 				Renegotiation:      tls.RenegotiateOnceAsClient,
 				ServerName:         conf.SNI,
+				Certificates:       certificates,
 			},
 		}}
 

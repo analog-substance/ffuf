@@ -5,6 +5,8 @@
     cookies = [
         "cookiename=cookievalue"
     ]
+    cert = ""
+    cert_key = ""
     data = "post=data&key=value"
     followredirects = false
     headers = [

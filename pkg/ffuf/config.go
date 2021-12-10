@@ -8,6 +8,8 @@ type Config struct {
 	AutoCalibration        bool                      `json:"autocalibration"`
 	AutoCalibrationStrings []string                  `json:"autocalibration_strings"`
 	Cancel                 context.CancelFunc        `json:"-"`
+	Cert                   string                    `json:"cert"`
+	CertKey                string                    `json:"cert_key"`
 	Colors                 bool                      `json:"colors"`
 	CommandKeywords        []string                  `json:"-"`
 	CommandLine            string                    `json:"cmdline"`
@@ -63,6 +65,8 @@ type InputProviderConfig struct {
 func NewConfig(ctx context.Context, cancel context.CancelFunc) Config {
 	var conf Config
 	conf.AutoCalibrationStrings = make([]string, 0)
+	conf.Cert = ""
+	conf.CertKey = ""
 	conf.CommandKeywords = make([]string, 0)
 	conf.Context = ctx
 	conf.Cancel = cancel
