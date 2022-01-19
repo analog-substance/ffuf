@@ -133,6 +133,17 @@ func (i *interactive) handleInput(in []byte) {
 		case "queueskip":
 			i.Job.SkipQueue()
 			i.Job.Output.Info("Skipping to the next queued job")
+		case "delayset":
+			if len(args) < 2 {
+				i.Job.Output.Error("Please define a value for request delay, or \"none\" for removing it")
+			} else if len(args) > 2 {
+				i.Job.Output.Error("Too many arguments for \"delay\"")
+			} else {
+				i.updateDelay(args[1])
+				i.Job.Output.Info("New request delay set")
+			}
+		case "delayshow":
+			i.printDelay()
 		default:
 			if i.paused {
 				i.Job.Output.Warning(fmt.Sprintf("Unknown command: \"%s\". Enter \"help\" for a list of available commands", args[0]))
@@ -173,6 +184,30 @@ func (i *interactive) updateFilter(name, value string) {
 			}
 		}
 		i.Job.Output.SetCurrentResults(results)
+	}
+}
+
+func (i *interactive) printDelay() {
+	data, err := i.Job.Config.Delay.MarshalJSON()
+	if err != nil {
+		i.Job.Output.Error(fmt.Sprintf("Error marshaling delay: %v", err))
+		return
+	}
+
+	delay := string(data)
+	i.Job.Output.Raw(fmt.Sprintf("Delay: %s\n", delay))
+}
+
+func (i *interactive) updateDelay(value string) {
+	delay := value
+	if delay == "none" {
+		delay = "0"
+	}
+
+	err := i.Job.Config.Delay.Initialize(delay)
+	if err != nil {
+		i.Job.Output.Error(fmt.Sprintf("Error while setting delay: %s", err))
+		return
 	}
 }
 
@@ -232,19 +267,21 @@ func (i *interactive) printHelp() {
 	}
 	help := `
 available commands:
- fc [value]             - (re)configure status code filter %s
- fl [value]             - (re)configure line count filter %s
- fw [value]             - (re)configure word count filter %s
- fs [value]             - (re)configure size filter %s
- ft [value]				- (re)configure time filter %s
- queueshow              - show recursive job queue
- queuedel [number]      - delete a recursion job in the queue
- queueskip              - advance to the next queued recursion job
- restart                - restart and resume the current ffuf job
- resume                 - resume current ffuf job (or: ENTER) 
- show                   - show results for the current job
- savejson [filename]    - save current matches to a file
- help                   - you are looking at it
+ fc [value]                 - (re)configure status code filter %s
+ fl [value]                 - (re)configure line count filter %s
+ fw [value]                 - (re)configure word count filter %s
+ fs [value]                 - (re)configure size filter %s
+ ft [value]				    - (re)configure time filter %s
+ queueshow                  - show recursive job queue
+ queuedel [number]          - delete a recursion job in the queue
+ queueskip                  - advance to the next queued recursion job
+ delayset [number|range]    - (re)configure the delay between requests
+ delayshow                  - show current request delay
+ restart                    - restart and resume the current ffuf job
+ resume                     - resume current ffuf job (or: ENTER) 
+ show                       - show results for the current job
+ savejson [filename]        - save current matches to a file
+ help                       - you are looking at it
 `
 	i.Job.Output.Raw(fmt.Sprintf(help, fc, fl, fw, fs, ft))
 }
